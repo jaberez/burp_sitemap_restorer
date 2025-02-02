@@ -82,12 +82,14 @@ def build_curl_command(item, new_token):
     return curl_command
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python script.py <xml_file_name> <new_token>")
+    if len(sys.argv) < 3:
+        print("Usage: python script.py <xml_file_name> <new_token> <additional culr params>")
         sys.exit(1)
 
     file_path = sys.argv[1]
     new_token = sys.argv[2]  # New token from the command line
+    add_param= sys.argv[3]
+    print(add_param) 
     items = parse_xml(file_path)
     for item in items:
         url = item.find('url').text
@@ -97,10 +99,11 @@ def main():
         except:
              print("Error building the  command") 
              continue 
-        print("Executing command:", ' '.join(curl_command))
+        curl_command = f"{' '.join(curl_command)} {add_param}"
+        print("Executing command:", curl_command)
         # Executes the curl command
         try:
-            result = subprocess.run(' '.join(curl_command), capture_output=True, text=True,shell=True)
+            result = subprocess.run(curl_command, capture_output=True, text=True,shell=True)
         except:
             print("An error occured. It could be binary file ")
         # Outputs the result of the command execution
